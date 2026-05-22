@@ -1,0 +1,1722 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestion de la Informacion - DER corregidos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,700;9..144,900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0a0a0a;
+    --paper: #f5f1e8;
+    --paper-2: #ebe5d6;
+    --line: #1a1a1a;
+    --accent: #c8553d;
+    --accent-2: #2d5d4f;
+    --accent-3: #d4a017;
+    --accent-4: #4a5fa8;
+    --muted: #6b6b6b;
+    --grid: rgba(10,10,10,0.04);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    min-height: 100vh;
+  }
+
+  /* ====== SIDEBAR ====== */
+  aside {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 32px 28px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    border-right: 3px solid var(--accent);
+  }
+
+  aside h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: 28px;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 6px;
+  }
+
+  aside .subtitle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--accent-3);
+    margin-bottom: 32px;
+    border-bottom: 1px solid rgba(245,241,232,0.15);
+    padding-bottom: 14px;
+  }
+
+  aside h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin: 28px 0 14px;
+    color: var(--accent-3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .legend-item {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 12px;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(245,241,232,0.08);
+  }
+
+  .legend-svg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .legend-item .name {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--paper);
+  }
+
+  .legend-item .desc {
+    font-size: 11px;
+    color: rgba(245,241,232,0.6);
+    line-height: 1.4;
+  }
+
+  .nav-links {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .nav-links a {
+    display: block;
+    color: var(--paper);
+    text-decoration: none;
+    padding: 10px 14px;
+    border-left: 2px solid transparent;
+    font-size: 13px;
+    transition: all 0.2s;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .nav-links a:hover {
+    background: rgba(245,241,232,0.05);
+    border-left-color: var(--accent);
+    padding-left: 18px;
+  }
+
+  .nav-links a strong {
+    color: var(--accent-3);
+    display: block;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    margin-bottom: 2px;
+  }
+
+  /* ====== MAIN ====== */
+  main {
+    padding: 48px 56px 80px;
+    max-width: 1100px;
+  }
+
+  .hero {
+    margin-bottom: 56px;
+    padding-bottom: 32px;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .hero .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  .hero h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 56px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-weight: 900;
+    margin-bottom: 16px;
+  }
+
+  .hero p {
+    font-size: 17px;
+    color: var(--muted);
+    max-width: 640px;
+  }
+
+  /* ====== ACTIVIDADES ====== */
+  .actividad {
+    margin-bottom: 80px;
+    scroll-margin-top: 24px;
+  }
+
+  .act-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 8px;
+  }
+
+  .act-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 4px 10px;
+    letter-spacing: 0.15em;
+    font-weight: 700;
+  }
+
+  .act-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .actividad h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 38px;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+    margin: 8px 0 24px;
+  }
+
+  .diagram-frame {
+    background: #fdfaf0;
+    border: 2px solid var(--ink);
+    padding: 24px;
+    margin: 24px 0;
+    box-shadow: 8px 8px 0 var(--ink);
+    position: relative;
+  }
+
+  .diagram-frame::before {
+    content: 'DER CORREGIDO';
+    position: absolute;
+    top: -12px;
+    left: 16px;
+    background: var(--accent);
+    color: var(--paper);
+    padding: 2px 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    font-weight: 700;
+  }
+
+  .diagram-frame svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* ====== ERRORES Y CORRECCIONES ====== */
+  .analysis {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 28px;
+  }
+
+  .card {
+    background: var(--paper-2);
+    border: 1px solid var(--ink);
+    padding: 22px 24px;
+  }
+
+  .card.errors {
+    border-left: 6px solid var(--accent);
+  }
+
+  .card.fixes {
+    border-left: 6px solid var(--accent-2);
+  }
+
+  .card h3 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 14px;
+    font-weight: 700;
+  }
+
+  .card.errors h3 { color: var(--accent); }
+  .card.fixes h3 { color: var(--accent-2); }
+
+  .card ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .card li {
+    padding: 8px 0;
+    border-bottom: 1px dotted rgba(0,0,0,0.15);
+    font-size: 14px;
+    line-height: 1.5;
+    position: relative;
+    padding-left: 22px;
+  }
+
+  .card li:last-child { border-bottom: none; }
+
+  .card.errors li::before {
+    content: 'x';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+  }
+
+  .card.fixes li::before {
+    content: '>';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    color: var(--accent-2);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+  }
+
+  .card strong {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    background: rgba(0,0,0,0.06);
+    padding: 1px 6px;
+  }
+
+  /* ====== SVG STYLES ====== */
+  .ent {
+    fill: #fef3c7;
+    stroke: var(--ink);
+    stroke-width: 2;
+  }
+
+  .ent-blue { fill: #cce4f7; }
+  .ent-green { fill: #c8e6c9; }
+  .ent-red { fill: #ffcdd2; }
+  .ent-purple { fill: #e1bee7; }
+  .ent-orange { fill: #ffe0b2; }
+
+  .ent-weak {
+    stroke-width: 2;
+    stroke-dasharray: none;
+  }
+
+  .ent-weak-outer {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 2;
+  }
+
+  .rel {
+    fill: #fff;
+    stroke: var(--ink);
+    stroke-width: 2;
+  }
+
+  .attr {
+    fill: #fff;
+    stroke: var(--ink);
+    stroke-width: 1.5;
+  }
+
+  .attr-pk-line {
+    stroke: var(--ink);
+    stroke-width: 1.5;
+  }
+
+  .conn {
+    stroke: var(--ink);
+    stroke-width: 1.5;
+    fill: none;
+  }
+
+  .lbl {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    fill: var(--ink);
+    text-anchor: middle;
+    dominant-baseline: central;
+  }
+
+  .lbl-rel {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    fill: var(--ink);
+    text-anchor: middle;
+    dominant-baseline: central;
+    font-style: italic;
+  }
+
+  .lbl-attr {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    fill: var(--ink);
+    text-anchor: middle;
+    dominant-baseline: central;
+  }
+
+  .card-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    fill: var(--accent);
+    text-anchor: middle;
+    dominant-baseline: central;
+  }
+
+  /* ====== TIPS ====== */
+  .tip {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 24px 28px;
+    margin: 24px 0;
+    position: relative;
+    border-left: 6px solid var(--accent-3);
+  }
+
+  .tip-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--accent-3);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .tip p {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ====== CONCEPT CARDS ====== */
+  .concepts {
+    margin-top: 64px;
+    padding-top: 40px;
+    border-top: 2px solid var(--ink);
+  }
+
+  .concepts h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 42px;
+    font-weight: 900;
+    margin-bottom: 28px;
+    letter-spacing: -0.02em;
+  }
+
+  .concept-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+
+  .concept {
+    background: #fff;
+    border: 1.5px solid var(--ink);
+    padding: 20px 22px;
+    transition: transform 0.15s;
+  }
+
+  .concept:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0 var(--ink);
+  }
+
+  .concept h4 {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .concept .term {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 8px;
+  }
+
+  .concept p {
+    font-size: 13px;
+    line-height: 1.55;
+    color: #2a2a2a;
+  }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    aside { position: relative; height: auto; }
+    main { padding: 32px 24px; }
+    .hero h1 { font-size: 38px; }
+    .analysis { grid-template-columns: 1fr; }
+    .concept-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ========== SIDEBAR ========== -->
+  <aside>
+    <h1>DER<br>Notacion<br>de Chen</h1>
+    <div class="subtitle">Gestion de la Informacion</div>
+
+    <h2>Leyenda de simbolos</h2>
+
+    <div class="legend-item">
+      <div class="legend-svg">
+        <svg width="50" height="32" viewBox="0 0 50 32">
+          <rect x="4" y="6" width="42" height="20" fill="#cce4f7" stroke="#1a1a1a" stroke-width="2"/>
+        </svg>
+      </div>
+      <div>
+        <div class="name">Entidad</div>
+        <div class="desc">Objeto del mundo real (sustantivo)</div>
+      </div>
+    </div>
+
+    <div class="legend-item">
+      <div class="legend-svg">
+        <svg width="50" height="32" viewBox="0 0 50 32">
+          <rect x="2" y="4" width="46" height="24" fill="none" stroke="#1a1a1a" stroke-width="2"/>
+          <rect x="6" y="8" width="38" height="16" fill="#ffcdd2" stroke="#1a1a1a" stroke-width="2"/>
+        </svg>
+      </div>
+      <div>
+        <div class="name">Entidad debil</div>
+        <div class="desc">Depende de otra para existir</div>
+      </div>
+    </div>
+
+    <div class="legend-item">
+      <div class="legend-svg">
+        <svg width="50" height="32" viewBox="0 0 50 32">
+          <polygon points="25,3 47,16 25,29 3,16" fill="#fff" stroke="#1a1a1a" stroke-width="2"/>
+        </svg>
+      </div>
+      <div>
+        <div class="name">Relacion</div>
+        <div class="desc">Verbo que une entidades</div>
+      </div>
+    </div>
+
+    <div class="legend-item">
+      <div class="legend-svg">
+        <svg width="50" height="32" viewBox="0 0 50 32">
+          <ellipse cx="25" cy="16" rx="22" ry="11" fill="#fff" stroke="#1a1a1a" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div>
+        <div class="name">Atributo</div>
+        <div class="desc">Propiedad de una entidad</div>
+      </div>
+    </div>
+
+    <div class="legend-item">
+      <div class="legend-svg">
+        <svg width="50" height="32" viewBox="0 0 50 32">
+          <ellipse cx="25" cy="16" rx="22" ry="11" fill="#fff" stroke="#1a1a1a" stroke-width="1.5"/>
+          <line x1="10" y1="22" x2="40" y2="22" stroke="#1a1a1a" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div>
+        <div class="name">Clave primaria</div>
+        <div class="desc">Atributo subrayado (unico)</div>
+      </div>
+    </div>
+
+    <div class="legend-item">
+      <div class="legend-svg">
+        <svg width="50" height="32" viewBox="0 0 50 32">
+          <ellipse cx="25" cy="16" rx="22" ry="11" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="3,2"/>
+        </svg>
+      </div>
+      <div>
+        <div class="name">Atributo derivado</div>
+        <div class="desc">Se calcula a partir de otros</div>
+      </div>
+    </div>
+
+    <div class="legend-item">
+      <div class="legend-svg">
+        <svg width="50" height="32" viewBox="0 0 50 32">
+          <ellipse cx="25" cy="16" rx="22" ry="11" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+          <ellipse cx="25" cy="16" rx="18" ry="8" fill="#fff" stroke="#1a1a1a" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div>
+        <div class="name">Multivaluado</div>
+        <div class="desc">Puede tener varios valores</div>
+      </div>
+    </div>
+
+    <h2>Cardinalidades</h2>
+
+    <div class="legend-item">
+      <div class="legend-svg">
+        <svg width="50" height="22" viewBox="0 0 50 22">
+          <line x1="2" y1="11" x2="48" y2="11" stroke="#1a1a1a" stroke-width="1.5"/>
+          <text x="14" y="6" font-family="JetBrains Mono" font-size="9" fill="#c8553d" font-weight="700">1</text>
+          <text x="36" y="6" font-family="JetBrains Mono" font-size="9" fill="#c8553d" font-weight="700">1</text>
+        </svg>
+      </div>
+      <div>
+        <div class="name">Uno a uno (1:1)</div>
+        <div class="desc">Cada A se relaciona con un solo B</div>
+      </div>
+    </div>
+
+    <div class="legend-item">
+      <div class="legend-svg">
+        <svg width="50" height="22" viewBox="0 0 50 22">
+          <line x1="2" y1="11" x2="48" y2="11" stroke="#1a1a1a" stroke-width="1.5"/>
+          <text x="14" y="6" font-family="JetBrains Mono" font-size="9" fill="#c8553d" font-weight="700">1</text>
+          <text x="36" y="6" font-family="JetBrains Mono" font-size="9" fill="#c8553d" font-weight="700">N</text>
+        </svg>
+      </div>
+      <div>
+        <div class="name">Uno a muchos (1:N)</div>
+        <div class="desc">Un A puede tener varios B</div>
+      </div>
+    </div>
+
+    <div class="legend-item">
+      <div class="legend-svg">
+        <svg width="50" height="22" viewBox="0 0 50 22">
+          <line x1="2" y1="11" x2="48" y2="11" stroke="#1a1a1a" stroke-width="1.5"/>
+          <text x="14" y="6" font-family="JetBrains Mono" font-size="9" fill="#c8553d" font-weight="700">N</text>
+          <text x="36" y="6" font-family="JetBrains Mono" font-size="9" fill="#c8553d" font-weight="700">M</text>
+        </svg>
+      </div>
+      <div>
+        <div class="name">Muchos a muchos (N:M)</div>
+        <div class="desc">Genera tabla intermedia</div>
+      </div>
+    </div>
+
+    <h2>Navegacion</h2>
+    <nav class="nav-links">
+      <a href="#act1"><strong>Actividad 01</strong>Plantas, procesos, maquinas</a>
+      <a href="#act2"><strong>Actividad 02</strong>Concesionario de coches</a>
+      <a href="#act3"><strong>Actividad 03</strong>Clinica odontologica</a>
+      <a href="#act4"><strong>Actividad 04</strong>Sucursales y compras (MER+MR)</a>
+      <a href="#conceptos"><strong>Final</strong>Conceptos para la evaluacion</a>
+    </nav>
+  </aside>
+
+  <!-- ========== MAIN ========== -->
+  <main>
+
+    <section class="hero">
+      <div class="eyebrow">Material de estudio / Evaluacion</div>
+      <h1>Diagramas Entidad-Relacion corregidos</h1>
+      <p>Cuatro actividades resueltas con notacion de Chen, analisis de errores comunes, correcciones aplicadas y los conceptos clave que el profesor probablemente va a evaluar.</p>
+    </section>
+
+    <!-- ========== ACTIVIDAD 1 ========== -->
+    <section class="actividad" id="act1">
+      <div class="act-header">
+        <span class="act-number">ACT 01</span>
+        <span class="act-tag">Industria / Planta de produccion</span>
+      </div>
+      <h2>Plantas, procesos y maquinas</h2>
+
+      <div class="diagram-frame">
+        <svg viewBox="0 0 1000 560" xmlns="http://www.w3.org/2000/svg">
+
+          <!-- Entidad Plantas -->
+          <rect class="ent ent-blue" x="60" y="240" width="160" height="60"/>
+          <text class="lbl" x="140" y="270">Plantas</text>
+
+          <!-- Atributos de Plantas -->
+          <line class="conn" x1="80" y1="240" x2="60" y2="170"/>
+          <ellipse class="attr" cx="55" cy="160" rx="42" ry="14"/>
+          <text class="lbl-attr" x="55" y="160">id_planta</text>
+          <line class="attr-pk-line" x1="32" y1="168" x2="78" y2="168"/>
+
+          <line class="conn" x1="140" y1="240" x2="140" y2="180"/>
+          <ellipse class="attr" cx="140" cy="170" rx="36" ry="14"/>
+          <text class="lbl-attr" x="140" y="170">nombre</text>
+
+          <line class="conn" x1="200" y1="240" x2="220" y2="170"/>
+          <ellipse class="attr" cx="225" cy="160" rx="28" ry="14"/>
+          <text class="lbl-attr" x="225" y="160">color</text>
+
+          <line class="conn" x1="100" y1="300" x2="70" y2="370"/>
+          <ellipse class="attr" cx="60" cy="380" rx="56" ry="14"/>
+          <text class="lbl-attr" x="60" y="380">superficie_m2</text>
+
+          <!-- Relacion contiene -->
+          <line class="conn" x1="220" y1="270" x2="290" y2="270"/>
+          <text class="card-num" x="240" y="258">1</text>
+          <polygon class="rel" points="350,235 410,270 350,305 290,270"/>
+          <text class="lbl-rel" x="350" y="270">contiene</text>
+          <line class="conn" x1="410" y1="270" x2="480" y2="270"/>
+          <text class="card-num" x="460" y="258">N</text>
+
+          <!-- Entidad Proceso -->
+          <rect class="ent ent-green" x="480" y="240" width="160" height="60"/>
+          <text class="lbl" x="560" y="270">Proceso</text>
+
+          <!-- Atributos de Proceso -->
+          <line class="conn" x1="500" y1="240" x2="480" y2="170"/>
+          <ellipse class="attr" cx="470" cy="160" rx="42" ry="14"/>
+          <text class="lbl-attr" x="470" y="160">id_proceso</text>
+          <line class="attr-pk-line" x1="442" y1="168" x2="498" y2="168"/>
+
+          <line class="conn" x1="560" y1="240" x2="560" y2="180"/>
+          <ellipse class="attr" cx="560" cy="170" rx="36" ry="14"/>
+          <text class="lbl-attr" x="560" y="170">nombre</text>
+
+          <line class="conn" x1="620" y1="240" x2="660" y2="170"/>
+          <ellipse class="attr" cx="680" cy="160" rx="68" ry="14"/>
+          <text class="lbl-attr" x="680" y="160">grado_complejidad</text>
+
+          <!-- Relacion utiliza -->
+          <line class="conn" x1="640" y1="270" x2="710" y2="270"/>
+          <text class="card-num" x="680" y="258">N</text>
+          <polygon class="rel" points="770,235 830,270 770,305 710,270"/>
+          <text class="lbl-rel" x="770" y="270">utiliza</text>
+          <line class="conn" x1="830" y1="270" x2="900" y2="270"/>
+          <text class="card-num" x="880" y="258">M</text>
+
+          <!-- Entidad Maquina -->
+          <rect class="ent ent-red" x="820" y="380" width="160" height="60"/>
+          <text class="lbl" x="900" y="410">Maquina</text>
+
+          <!-- Conexion utiliza-maquina con codo -->
+          <line class="conn" x1="900" y1="270" x2="900" y2="380"/>
+
+          <!-- Atributos de Maquina -->
+          <line class="conn" x1="830" y1="380" x2="800" y2="475"/>
+          <ellipse class="attr" cx="780" cy="480" rx="72" ry="14"/>
+          <text class="lbl-attr" x="780" y="480">num_identificacion</text>
+          <line class="attr-pk-line" x1="720" y1="488" x2="840" y2="488"/>
+
+          <line class="conn" x1="900" y1="440" x2="900" y2="475"/>
+          <ellipse class="attr" cx="900" cy="485" rx="32" ry="14"/>
+          <text class="lbl-attr" x="900" y="485">marca</text>
+
+          <line class="conn" x1="970" y1="440" x2="990" y2="475"/>
+          <ellipse class="attr" cx="985" cy="485" rx="34" ry="14"/>
+          <text class="lbl-attr" x="985" y="485">modelo</text>
+
+        </svg>
+      </div>
+
+      <div class="analysis">
+        <div class="card errors">
+          <h3>Errores del original</h3>
+          <ul>
+            <li>Ninguna entidad tiene clave primaria marcada</li>
+            <li>El nombre <strong>Lista de Procesos</strong> es incorrecto: una entidad es un objeto individual, no una coleccion</li>
+            <li>Cardinalidad Procesos-Maquinas en 1:N es irreal (una maquina suele participar en varios procesos)</li>
+            <li>Los rombos solo dicen <strong>T</strong>, sin verbo descriptivo</li>
+            <li><strong>M2</strong> y <strong>Superficie</strong> son redundantes (M2 es la unidad de Superficie)</li>
+            <li><strong>g. complejidad</strong> usa abreviatura no estandar</li>
+          </ul>
+        </div>
+        <div class="card fixes">
+          <h3>Correcciones aplicadas</h3>
+          <ul>
+            <li>Se agregaron PKs subrayadas: <strong>id_planta</strong>, <strong>id_proceso</strong>, <strong>num_identificacion</strong></li>
+            <li>Se renombro a <strong>Proceso</strong> (singular, representa una instancia)</li>
+            <li>Se ajusto la relacion Proceso-Maquina a <strong>N:M</strong></li>
+            <li>Los rombos ahora tienen verbo: <strong>contiene</strong> y <strong>utiliza</strong></li>
+            <li>Se unifico en un solo atributo <strong>superficie_m2</strong></li>
+            <li>Se expandio a <strong>grado_complejidad</strong></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tip">
+        <div class="tip-label">Posible pregunta del profe</div>
+        <p>"Por que cambiaste la cardinalidad?" - Porque modelar 1:N obligaria a duplicar la misma maquina por cada proceso donde participa, lo cual viola la 3FN (forma normal). Con N:M se crea una tabla intermedia que evita la redundancia.</p>
+      </div>
+    </section>
+
+    <!-- ========== ACTIVIDAD 2 ========== -->
+    <section class="actividad" id="act2">
+      <div class="act-header">
+        <span class="act-number">ACT 02</span>
+        <span class="act-tag">Comercio / Concesionario</span>
+      </div>
+      <h2>Concesionario de coches</h2>
+
+      <div class="diagram-frame">
+        <svg viewBox="0 0 1100 720" xmlns="http://www.w3.org/2000/svg">
+
+          <!-- ============ FILA SUPERIOR: Proveedor - Coche - Reparacion ============ -->
+
+          <!-- Entidad Proveedor -->
+          <rect class="ent ent-blue" x="40" y="80" width="160" height="60"/>
+          <text class="lbl" x="120" y="110">Proveedor</text>
+
+          <!-- Atributos Proveedor -->
+          <line class="conn" x1="60" y1="80" x2="40" y2="40"/>
+          <ellipse class="attr" cx="40" cy="30" rx="52" ry="13"/>
+          <text class="lbl-attr" x="40" y="30">id_proveedor</text>
+          <line class="attr-pk-line" x1="2" y1="38" x2="78" y2="38"/>
+
+          <line class="conn" x1="120" y1="80" x2="120" y2="50"/>
+          <ellipse class="attr" cx="120" cy="40" rx="34" ry="13"/>
+          <text class="lbl-attr" x="120" y="40">nombre</text>
+
+          <line class="conn" x1="180" y1="80" x2="200" y2="50"/>
+          <ellipse class="attr" cx="210" cy="40" rx="32" ry="13"/>
+          <text class="lbl-attr" x="210" y="40">telefono</text>
+
+          <!-- Relacion suministra -->
+          <line class="conn" x1="200" y1="110" x2="260" y2="110"/>
+          <text class="card-num" x="220" y="98">1</text>
+          <polygon class="rel" points="320,80 380,110 320,140 260,110"/>
+          <text class="lbl-rel" x="320" y="110">suministra</text>
+          <line class="conn" x1="380" y1="110" x2="440" y2="110"/>
+          <text class="card-num" x="420" y="98">N</text>
+
+          <!-- Entidad Coche -->
+          <rect class="ent ent-orange" x="440" y="80" width="160" height="60"/>
+          <text class="lbl" x="520" y="110">Coche</text>
+
+          <!-- Atributos Coche -->
+          <line class="conn" x1="460" y1="80" x2="440" y2="40"/>
+          <ellipse class="attr" cx="440" cy="30" rx="40" ry="13"/>
+          <text class="lbl-attr" x="440" y="30">matricula</text>
+          <line class="attr-pk-line" x1="404" y1="38" x2="476" y2="38"/>
+
+          <line class="conn" x1="500" y1="80" x2="500" y2="50"/>
+          <ellipse class="attr" cx="500" cy="40" rx="28" ry="13"/>
+          <text class="lbl-attr" x="500" y="40">marca</text>
+
+          <line class="conn" x1="540" y1="80" x2="560" y2="50"/>
+          <ellipse class="attr" cx="565" cy="40" rx="30" ry="13"/>
+          <text class="lbl-attr" x="565" y="40">modelo</text>
+
+          <line class="conn" x1="580" y1="80" x2="620" y2="50"/>
+          <ellipse class="attr" cx="625" cy="40" rx="24" ry="13"/>
+          <text class="lbl-attr" x="625" y="40">tipo</text>
+
+          <!-- Relacion tiene (coche-reparacion) -->
+          <line class="conn" x1="600" y1="110" x2="660" y2="110"/>
+          <text class="card-num" x="620" y="98">1</text>
+          <polygon class="rel" points="720,80 780,110 720,140 660,110"/>
+          <text class="lbl-rel" x="720" y="110">tiene</text>
+          <line class="conn" x1="780" y1="110" x2="840" y2="110"/>
+          <text class="card-num" x="820" y="98">N</text>
+
+          <!-- Entidad Reparacion -->
+          <rect class="ent ent-red" x="840" y="80" width="160" height="60"/>
+          <text class="lbl" x="920" y="110">Reparacion</text>
+
+          <!-- Atributos Reparacion -->
+          <line class="conn" x1="860" y1="80" x2="840" y2="40"/>
+          <ellipse class="attr" cx="840" cy="30" rx="50" ry="13"/>
+          <text class="lbl-attr" x="840" y="30">id_reparacion</text>
+          <line class="attr-pk-line" x1="794" y1="38" x2="886" y2="38"/>
+
+          <line class="conn" x1="900" y1="80" x2="900" y2="50"/>
+          <ellipse class="attr" cx="900" cy="40" rx="26" ry="13"/>
+          <text class="lbl-attr" x="900" y="40">tipo</text>
+
+          <line class="conn" x1="950" y1="80" x2="970" y2="50"/>
+          <ellipse class="attr" cx="975" cy="40" rx="28" ry="13"/>
+          <text class="lbl-attr" x="975" y="40">fecha</text>
+
+          <line class="conn" x1="990" y1="100" x2="1050" y2="80"/>
+          <ellipse class="attr" cx="1060" cy="75" rx="28" ry="13"/>
+          <text class="lbl-attr" x="1060" y="75">costo</text>
+
+          <!-- ============ Relacion expuesto_en (Coche-Exposicion) ============ -->
+          <line class="conn" x1="520" y1="140" x2="520" y2="220"/>
+          <text class="card-num" x="510" y="180">N</text>
+          <polygon class="rel" points="490,220 520,250 550,220 520,190"/>
+          <text class="lbl-rel" x="520" y="220">expuesto_en</text>
+          <line class="conn" x1="550" y1="220" x2="700" y2="220"/>
+          <text class="card-num" x="680" y="208">1</text>
+
+          <!-- Entidad Exposicion -->
+          <rect class="ent ent-purple" x="700" y="190" width="160" height="60"/>
+          <text class="lbl" x="780" y="220">Exposicion</text>
+
+          <line class="conn" x1="720" y1="250" x2="700" y2="290"/>
+          <ellipse class="attr" cx="700" cy="300" rx="44" ry="13"/>
+          <text class="lbl-attr" x="700" y="300">id_exposicion</text>
+          <line class="attr-pk-line" x1="660" y1="308" x2="740" y2="308"/>
+
+          <line class="conn" x1="780" y1="250" x2="780" y2="290"/>
+          <ellipse class="attr" cx="780" cy="300" rx="34" ry="13"/>
+          <text class="lbl-attr" x="780" y="300">nombre</text>
+
+          <line class="conn" x1="840" y1="250" x2="860" y2="290"/>
+          <ellipse class="attr" cx="865" cy="300" rx="34" ry="13"/>
+          <text class="lbl-attr" x="865" y="300">ubicacion</text>
+
+          <!-- ============ FILA INFERIOR: Cliente - Reserva / Vendedor ============ -->
+
+          <!-- Entidad Cliente -->
+          <rect class="ent ent-green" x="40" y="440" width="160" height="60"/>
+          <text class="lbl" x="120" y="470">Cliente</text>
+
+          <line class="conn" x1="60" y1="500" x2="40" y2="555"/>
+          <ellipse class="attr" cx="40" cy="565" rx="40" ry="13"/>
+          <text class="lbl-attr" x="40" y="565">id_cliente</text>
+          <line class="attr-pk-line" x1="6" y1="573" x2="74" y2="573"/>
+
+          <line class="conn" x1="120" y1="500" x2="120" y2="555"/>
+          <ellipse class="attr" cx="120" cy="565" rx="34" ry="13"/>
+          <text class="lbl-attr" x="120" y="565">nombre</text>
+
+          <line class="conn" x1="180" y1="500" x2="200" y2="555"/>
+          <ellipse class="attr" cx="205" cy="565" rx="32" ry="13"/>
+          <text class="lbl-attr" x="205" y="565">telefono</text>
+
+          <!-- Relacion reserva -->
+          <line class="conn" x1="200" y1="455" x2="260" y2="430"/>
+          <text class="card-num" x="225" y="430">1</text>
+          <polygon class="rel" points="320,405 380,435 320,465 260,435"/>
+          <text class="lbl-rel" x="320" y="435">realiza</text>
+          <line class="conn" x1="380" y1="435" x2="440" y2="435"/>
+          <text class="card-num" x="420" y="423">N</text>
+
+          <!-- Entidad Reserva (debil) -->
+          <rect class="ent-weak-outer" x="436" y="401" width="168" height="68"/>
+          <rect class="ent ent-red" x="440" y="405" width="160" height="60"/>
+          <text class="lbl" x="520" y="435">Reserva</text>
+
+          <line class="conn" x1="460" y1="465" x2="440" y2="520"/>
+          <ellipse class="attr" cx="430" cy="530" rx="44" ry="13"/>
+          <text class="lbl-attr" x="430" y="530">id_reserva</text>
+          <line class="attr-pk-line" x1="392" y1="538" x2="468" y2="538"/>
+
+          <line class="conn" x1="540" y1="465" x2="550" y2="520"/>
+          <ellipse class="attr" cx="555" cy="530" rx="28" ry="13"/>
+          <text class="lbl-attr" x="555" y="530">fecha</text>
+
+          <!-- Relacion reserva-coche -->
+          <line class="conn" x1="600" y1="435" x2="660" y2="435"/>
+          <text class="card-num" x="620" y="423">N</text>
+          <polygon class="rel" points="720,405 780,435 720,465 660,435"/>
+          <text class="lbl-rel" x="720" y="435">sobre</text>
+          <line class="conn" x1="780" y1="435" x2="840" y2="435"/>
+          <text class="card-num" x="820" y="423">1</text>
+
+          <!-- Conexion sobre-Coche (sube) -->
+          <line class="conn" x1="840" y1="435" x2="900" y2="435"/>
+          <line class="conn" x1="900" y1="435" x2="900" y2="170"/>
+          <line class="conn" x1="900" y1="170" x2="600" y2="170"/>
+          <line class="conn" x1="600" y1="170" x2="600" y2="140"/>
+
+          <!-- Relacion vende (Cliente-Vendedor) -->
+          <line class="conn" x1="200" y1="485" x2="260" y2="600"/>
+          <text class="card-num" x="225" y="600">N</text>
+          <polygon class="rel" points="320,570 380,600 320,630 260,600"/>
+          <text class="lbl-rel" x="320" y="600">compra_a</text>
+          <line class="conn" x1="380" y1="600" x2="440" y2="600"/>
+          <text class="card-num" x="420" y="588">M</text>
+
+          <!-- Entidad Vendedor -->
+          <rect class="ent ent-blue" x="440" y="570" width="160" height="60"/>
+          <text class="lbl" x="520" y="600">Vendedor</text>
+
+          <line class="conn" x1="460" y1="630" x2="440" y2="685"/>
+          <ellipse class="attr" cx="430" cy="695" rx="48" ry="13"/>
+          <text class="lbl-attr" x="430" y="695">id_vendedor</text>
+          <line class="attr-pk-line" x1="388" y1="703" x2="472" y2="703"/>
+
+          <line class="conn" x1="500" y1="630" x2="490" y2="685"/>
+          <ellipse class="attr" cx="487" cy="695" rx="32" ry="13"/>
+          <text class="lbl-attr" x="487" y="695">nombre</text>
+
+          <line class="conn" x1="540" y1="630" x2="540" y2="685"/>
+          <ellipse class="attr" cx="545" cy="695" rx="26" ry="13"/>
+          <text class="lbl-attr" x="545" y="695">tipo</text>
+
+          <line class="conn" x1="580" y1="630" x2="600" y2="685"/>
+          <ellipse class="attr" cx="615" cy="695" rx="36" ry="13" stroke-dasharray="3,2" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+          <text class="lbl-attr" x="615" y="695">salario</text>
+
+        </svg>
+      </div>
+
+      <div class="analysis">
+        <div class="card errors">
+          <h3>Errores del original</h3>
+          <ul>
+            <li>Las relaciones se llaman <strong>S, T, E, R, V</strong> (letras sueltas sin sentido)</li>
+            <li>Faltan claves primarias en Coche, Reparacion y Exposicion</li>
+            <li>Relacion Cliente-Vendedor en 1:N es discutible: un cliente puede comprar a distintos vendedores</li>
+            <li>El atributo <strong>Solo_Salario</strong> en Vendedor es ambiguo y redundante con <strong>Tipo</strong></li>
+            <li>El atributo <strong>id_proveedor</strong> existe pero no se subraya como PK</li>
+          </ul>
+        </div>
+        <div class="card fixes">
+          <h3>Correcciones aplicadas</h3>
+          <ul>
+            <li>Relaciones con verbos: <strong>suministra, tiene, expuesto_en, realiza, sobre, compra_a</strong></li>
+            <li>PKs agregadas y subrayadas en todas las entidades</li>
+            <li>Cliente-Vendedor pasa a <strong>N:M</strong></li>
+            <li>Se reemplazo <strong>Solo_Salario</strong> por <strong>salario</strong> como atributo <em>derivado</em> (elipse punteada), porque depende de Tipo</li>
+            <li>Reserva se modelo como <strong>entidad debil</strong> (doble rectangulo) porque depende del Cliente y Coche</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tip">
+        <div class="tip-label">Concepto clave</div>
+        <p>Una <strong>entidad debil</strong> se dibuja con doble rectangulo y existe solamente si existe la entidad fuerte de la que depende. Si se borra el Cliente, sus Reservas tambien desaparecen.</p>
+      </div>
+    </section>
+
+    <!-- ========== ACTIVIDAD 3 ========== -->
+    <section class="actividad" id="act3">
+      <div class="act-header">
+        <span class="act-number">ACT 03</span>
+        <span class="act-tag">Salud / Sistema clinico</span>
+      </div>
+      <h2>Clinica odontologica</h2>
+
+      <div class="diagram-frame">
+        <svg viewBox="0 0 1200 780" xmlns="http://www.w3.org/2000/svg">
+
+          <!-- ============ Consultorio (izquierda arriba) ============ -->
+          <rect class="ent ent-blue" x="40" y="80" width="160" height="60"/>
+          <text class="lbl" x="120" y="110">Consultorio</text>
+
+          <line class="conn" x1="60" y1="80" x2="40" y2="40"/>
+          <ellipse class="attr" cx="40" cy="30" rx="48" ry="13"/>
+          <text class="lbl-attr" x="40" y="30">id_consultorio</text>
+          <line class="attr-pk-line" x1="0" y1="38" x2="80" y2="38"/>
+
+          <line class="conn" x1="120" y1="80" x2="120" y2="50"/>
+          <ellipse class="attr" cx="120" cy="40" rx="22" ry="13"/>
+          <text class="lbl-attr" x="120" y="40">piso</text>
+
+          <line class="conn" x1="180" y1="80" x2="200" y2="50"/>
+          <ellipse class="attr" cx="208" cy="40" rx="22" ry="13"/>
+          <text class="lbl-attr" x="208" y="40">numero</text>
+
+          <!-- ============ Odontologo (centro arriba) ============ -->
+          <rect class="ent ent-green" x="440" y="80" width="160" height="60"/>
+          <text class="lbl" x="520" y="110">Odontologo</text>
+
+          <line class="conn" x1="460" y1="80" x2="440" y2="40"/>
+          <ellipse class="attr" cx="440" cy="30" rx="46" ry="13"/>
+          <text class="lbl-attr" x="440" y="30">id_odontologo</text>
+          <line class="attr-pk-line" x1="396" y1="38" x2="484" y2="38"/>
+
+          <line class="conn" x1="500" y1="80" x2="500" y2="50"/>
+          <ellipse class="attr" cx="500" cy="40" rx="34" ry="13"/>
+          <text class="lbl-attr" x="500" y="40">nombre</text>
+
+          <line class="conn" x1="540" y1="80" x2="560" y2="50"/>
+          <ellipse class="attr" cx="568" cy="40" rx="30" ry="13"/>
+          <text class="lbl-attr" x="568" y="40">telefono</text>
+
+          <line class="conn" x1="580" y1="100" x2="620" y2="80"/>
+          <ellipse class="attr" cx="628" cy="75" rx="28" ry="13"/>
+          <text class="lbl-attr" x="628" y="75">correo</text>
+
+          <line class="conn" x1="600" y1="125" x2="660" y2="125"/>
+          <ellipse class="attr" cx="690" cy="125" rx="56" ry="13"/>
+          <text class="lbl-attr" x="690" y="125">especialidad</text>
+
+          <!-- ============ Paciente (derecha arriba) ============ -->
+          <rect class="ent ent-orange" x="980" y="80" width="160" height="60"/>
+          <text class="lbl" x="1060" y="110">Paciente</text>
+
+          <line class="conn" x1="1000" y1="80" x2="980" y2="40"/>
+          <ellipse class="attr" cx="980" cy="30" rx="40" ry="13"/>
+          <text class="lbl-attr" x="980" y="30">id_paciente</text>
+          <line class="attr-pk-line" x1="944" y1="38" x2="1016" y2="38"/>
+
+          <line class="conn" x1="1060" y1="80" x2="1060" y2="50"/>
+          <ellipse class="attr" cx="1060" cy="40" rx="34" ry="13"/>
+          <text class="lbl-attr" x="1060" y="40">nombre</text>
+
+          <line class="conn" x1="1120" y1="80" x2="1140" y2="50"/>
+          <ellipse class="attr" cx="1148" cy="40" rx="30" ry="13"/>
+          <text class="lbl-attr" x="1148" y="40">apellido</text>
+
+          <line class="conn" x1="1140" y1="100" x2="1175" y2="100"/>
+          <ellipse class="attr" cx="1175" cy="100" rx="22" ry="13"/>
+          <text class="lbl-attr" x="1175" y="100">f_nac</text>
+
+          <line class="conn" x1="1080" y1="140" x2="1110" y2="160"/>
+          <ellipse class="attr" cx="1130" cy="170" rx="28" ry="13"/>
+          <text class="lbl-attr" x="1130" y="170">correo</text>
+
+          <!-- ============ CITA (centro) - entidad central ============ -->
+          <rect class="ent ent-purple" x="520" y="290" width="160" height="60"/>
+          <text class="lbl" x="600" y="320">Cita</text>
+
+          <line class="conn" x1="540" y1="290" x2="490" y2="240"/>
+          <ellipse class="attr" cx="478" cy="232" rx="32" ry="13"/>
+          <text class="lbl-attr" x="478" y="232">id_cita</text>
+          <line class="attr-pk-line" x1="450" y1="240" x2="506" y2="240"/>
+
+          <line class="conn" x1="600" y1="290" x2="600" y2="250"/>
+          <ellipse class="attr" cx="600" cy="240" rx="28" ry="13"/>
+          <text class="lbl-attr" x="600" y="240">fecha</text>
+
+          <line class="conn" x1="660" y1="290" x2="700" y2="250"/>
+          <ellipse class="attr" cx="708" cy="240" rx="22" ry="13"/>
+          <text class="lbl-attr" x="708" y="240">hora</text>
+
+          <line class="conn" x1="660" y1="350" x2="700" y2="390"/>
+          <ellipse class="attr" cx="708" cy="400" rx="26" ry="13"/>
+          <text class="lbl-attr" x="708" y="400">estado</text>
+
+          <!-- Relacion Consultorio-Cita (alberga) -->
+          <line class="conn" x1="200" y1="110" x2="200" y2="200"/>
+          <text class="card-num" x="190" y="180">1</text>
+          <polygon class="rel" points="170,200 200,230 230,200 200,170"/>
+          <text class="lbl-rel" x="200" y="200">alberga</text>
+          <line class="conn" x1="200" y1="230" x2="200" y2="320"/>
+          <line class="conn" x1="200" y1="320" x2="520" y2="320"/>
+          <text class="card-num" x="240" y="308">N</text>
+
+          <!-- Relacion Odontologo-Cita (atiende) -->
+          <line class="conn" x1="520" y1="140" x2="520" y2="200"/>
+          <text class="card-num" x="510" y="180">1</text>
+          <polygon class="rel" points="490,200 520,230 550,200 520,170"/>
+          <text class="lbl-rel" x="520" y="200">atiende</text>
+          <line class="conn" x1="520" y1="230" x2="520" y2="290"/>
+          <text class="card-num" x="510" y="280">N</text>
+
+          <!-- Relacion Paciente-Cita (solicita) -->
+          <line class="conn" x1="1060" y1="140" x2="1060" y2="320"/>
+          <line class="conn" x1="1060" y1="320" x2="900" y2="320"/>
+          <text class="card-num" x="1050" y="200">1</text>
+          <polygon class="rel" points="870,290 900,320 870,350 840,320"/>
+          <text class="lbl-rel" x="870" y="320">solicita</text>
+          <line class="conn" x1="840" y1="320" x2="680" y2="320"/>
+          <text class="card-num" x="720" y="308">N</text>
+
+          <!-- ============ Tratamiento (izquierda abajo) ============ -->
+          <rect class="ent ent-blue" x="40" y="490" width="160" height="60"/>
+          <text class="lbl" x="120" y="520">Tratamiento</text>
+
+          <line class="conn" x1="60" y1="490" x2="40" y2="440"/>
+          <ellipse class="attr" cx="40" cy="430" rx="38" ry="13"/>
+          <text class="lbl-attr" x="40" y="430">codigo</text>
+          <line class="attr-pk-line" x1="6" y1="438" x2="74" y2="438"/>
+
+          <line class="conn" x1="120" y1="490" x2="120" y2="460"/>
+          <ellipse class="attr" cx="120" cy="450" rx="34" ry="13"/>
+          <text class="lbl-attr" x="120" y="450">nombre</text>
+
+          <line class="conn" x1="180" y1="490" x2="210" y2="460"/>
+          <ellipse class="attr" cx="218" cy="450" rx="28" ry="13"/>
+          <text class="lbl-attr" x="218" y="450">costo</text>
+
+          <!-- Relacion Cita-Tratamiento (incluye) -->
+          <line class="conn" x1="520" y1="320" x2="380" y2="320"/>
+          <line class="conn" x1="380" y1="320" x2="380" y2="520"/>
+          <text class="card-num" x="400" y="335">N</text>
+          <polygon class="rel" points="350,520 380,550 410,520 380,490"/>
+          <text class="lbl-rel" x="380" y="520">incluye</text>
+          <line class="conn" x1="350" y1="520" x2="200" y2="520"/>
+          <text class="card-num" x="225" y="510">M</text>
+
+          <!-- ============ Factura (centro-derecha abajo) ============ -->
+          <rect class="ent ent-red" x="520" y="490" width="160" height="60"/>
+          <text class="lbl" x="600" y="520">Factura</text>
+
+          <line class="conn" x1="540" y1="550" x2="510" y2="610"/>
+          <ellipse class="attr" cx="500" cy="620" rx="42" ry="13"/>
+          <text class="lbl-attr" x="500" y="620">num_factura</text>
+          <line class="attr-pk-line" x1="460" y1="628" x2="540" y2="628"/>
+
+          <line class="conn" x1="600" y1="550" x2="600" y2="610"/>
+          <ellipse class="attr" cx="600" cy="620" rx="38" ry="13"/>
+          <text class="lbl-attr" x="600" y="620">monto_total</text>
+
+          <line class="conn" x1="660" y1="550" x2="690" y2="610"/>
+          <ellipse class="attr" cx="700" cy="620" rx="26" ry="13"/>
+          <text class="lbl-attr" x="700" y="620">fecha</text>
+
+          <!-- Relacion Cita-Factura (genera) -->
+          <line class="conn" x1="600" y1="350" x2="600" y2="400"/>
+          <text class="card-num" x="590" y="380">1</text>
+          <polygon class="rel" points="570,400 600,430 630,400 600,370"/>
+          <text class="lbl-rel" x="600" y="400">genera</text>
+          <line class="conn" x1="600" y1="430" x2="600" y2="490"/>
+          <text class="card-num" x="590" y="470">1</text>
+
+          <!-- ============ Historia Clinica (derecha abajo) ============ -->
+          <rect class="ent ent-purple" x="980" y="490" width="160" height="60"/>
+          <text class="lbl" x="1060" y="520">H_Clinica</text>
+
+          <line class="conn" x1="1000" y1="550" x2="980" y2="610"/>
+          <ellipse class="attr" cx="970" cy="620" rx="44" ry="13"/>
+          <text class="lbl-attr" x="970" y="620">id_historia</text>
+          <line class="attr-pk-line" x1="930" y1="628" x2="1010" y2="628"/>
+
+          <line class="conn" x1="1060" y1="550" x2="1060" y2="610"/>
+          <ellipse class="attr" cx="1060" cy="620" rx="48" ry="13"/>
+          <text class="lbl-attr" x="1060" y="620">observaciones</text>
+
+          <line class="conn" x1="1120" y1="550" x2="1150" y2="610"/>
+          <ellipse class="attr" cx="1160" cy="620" rx="30" ry="13"/>
+          <text class="lbl-attr" x="1160" y="620">alergias</text>
+
+          <!-- Relacion Paciente-H.Clinica (posee) 1:1 -->
+          <line class="conn" x1="1060" y1="140" x2="1060" y2="380"/>
+          <text class="card-num" x="1050" y="220">1</text>
+          <polygon class="rel" points="1030,380 1060,410 1090,380 1060,350"/>
+          <text class="lbl-rel" x="1060" y="380">posee</text>
+          <line class="conn" x1="1060" y1="410" x2="1060" y2="490"/>
+          <text class="card-num" x="1050" y="470">1</text>
+
+        </svg>
+      </div>
+
+      <div class="analysis">
+        <div class="card errors">
+          <h3>Errores del original</h3>
+          <ul>
+            <li>Todos los rombos se llaman <strong>t</strong> o <strong>x</strong>, sin nombre real</li>
+            <li>Abreviaturas confusas: <strong>f.n, M.dP, N.dF, c.OPL, fecha.v</strong></li>
+            <li>Relacion Paciente-H.Clinica modelada como 1:N cuando deberia ser <strong>1:1</strong></li>
+            <li><strong>Detalle Tratamiento</strong> sobra: se puede modelar como relacion N:M entre Cita y Tratamiento</li>
+            <li>El atributo <strong>correo</strong> aparece dos veces en Odontologo (duplicado)</li>
+            <li>Falta claridad en las PKs de varias entidades</li>
+          </ul>
+        </div>
+        <div class="card fixes">
+          <h3>Correcciones aplicadas</h3>
+          <ul>
+            <li>Rombos con verbos: <strong>alberga, atiende, solicita, incluye, genera, posee</strong></li>
+            <li>Atributos expandidos: <strong>f_nac, monto_total, num_factura, observaciones</strong></li>
+            <li>Paciente-H_Clinica ahora es <strong>1:1</strong> (cada paciente una sola historia)</li>
+            <li>Se elimino la entidad <strong>Detalle Tratamiento</strong>: Cita-Tratamiento es directamente N:M</li>
+            <li>Cita-Factura como <strong>1:1</strong> (cada cita una factura)</li>
+            <li>PKs todas marcadas y subrayadas</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tip">
+        <div class="tip-label">Por que eliminar Detalle Tratamiento?</div>
+        <p>Cuando hay una relacion N:M entre dos entidades (Cita-Tratamiento), al pasar al modelo logico esa relacion automaticamente se convierte en una tabla intermedia. No hace falta modelarla como entidad debil en el DER conceptual: agrega ruido visual.</p>
+      </div>
+    </section>
+
+    <!-- ========== ACTIVIDAD 4 ========== -->
+    <section class="actividad" id="act4">
+      <div class="act-header">
+        <span class="act-number">ACT 04</span>
+        <span class="act-tag">Retail / MER + MR (modelo relacional)</span>
+      </div>
+      <h2>Sucursales, productos y compras</h2>
+
+      <p style="margin-bottom: 24px; color: var(--muted); font-size: 15px;">Esta actividad combina el <strong>Modelo Entidad-Relacion (MER)</strong> arriba y el <strong>Modelo Relacional (MR)</strong> abajo, que es la transformacion a tablas con claves primarias y foraneas.</p>
+
+      <!-- MER -->
+      <div class="diagram-frame">
+        <svg viewBox="0 0 1200 720" xmlns="http://www.w3.org/2000/svg">
+
+          <!-- SUCURSAL -->
+          <rect class="ent ent-green" x="60" y="60" width="180" height="60"/>
+          <text class="lbl" x="150" y="90">Sucursal</text>
+
+          <line class="conn" x1="80" y1="60" x2="60" y2="20"/>
+          <ellipse class="attr" cx="60" cy="14" rx="32" ry="12"/>
+          <text class="lbl-attr" x="60" y="14">CUIT</text>
+          <line class="attr-pk-line" x1="36" y1="22" x2="84" y2="22"/>
+
+          <line class="conn" x1="150" y1="60" x2="150" y2="32"/>
+          <ellipse class="attr" cx="150" cy="22" rx="30" ry="12"/>
+          <text class="lbl-attr" x="150" y="22">nombre</text>
+
+          <line class="conn" x1="220" y1="60" x2="240" y2="32"/>
+          <ellipse class="attr" cx="248" cy="22" rx="28" ry="12"/>
+          <text class="lbl-attr" x="248" y="22">ciudad</text>
+
+          <!-- Relacion trabaja_en (Sucursal-Empleado) -->
+          <line class="conn" x1="150" y1="120" x2="150" y2="190"/>
+          <text class="card-num" x="138" y="160">N</text>
+          <polygon class="rel" points="100,190 150,220 200,190 150,160"/>
+          <text class="lbl-rel" x="150" y="190">trabaja_en</text>
+          <line class="conn" x1="150" y1="220" x2="150" y2="290"/>
+          <text class="card-num" x="138" y="280">M</text>
+
+          <line class="conn" x1="200" y1="190" x2="240" y2="180"/>
+          <ellipse class="attr" cx="262" cy="175" rx="28" ry="12"/>
+          <text class="lbl-attr" x="262" y="175">horario</text>
+
+          <!-- EMPLEADO -->
+          <rect class="ent ent-orange" x="60" y="290" width="180" height="60"/>
+          <text class="lbl" x="150" y="320">Empleado</text>
+
+          <line class="conn" x1="80" y1="350" x2="60" y2="395"/>
+          <ellipse class="attr" cx="50" cy="405" rx="30" ry="12"/>
+          <text class="lbl-attr" x="50" y="405">legajo</text>
+          <line class="attr-pk-line" x1="28" y1="413" x2="72" y2="413"/>
+
+          <line class="conn" x1="150" y1="350" x2="150" y2="395"/>
+          <ellipse class="attr" cx="150" cy="405" rx="32" ry="12"/>
+          <text class="lbl-attr" x="150" y="405">nombre</text>
+
+          <line class="conn" x1="220" y1="350" x2="245" y2="395"/>
+          <ellipse class="attr" cx="252" cy="405" rx="22" ry="12"/>
+          <text class="lbl-attr" x="252" y="405">dni</text>
+
+          <!-- telefono multivaluado -->
+          <line class="conn" x1="240" y1="320" x2="290" y2="320"/>
+          <ellipse cx="320" cy="320" rx="30" ry="13" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+          <ellipse class="attr" cx="320" cy="320" rx="25" ry="9"/>
+          <text class="lbl-attr" x="320" y="320">telefono</text>
+
+          <!-- Relacion vende (Sucursal-Producto) -->
+          <line class="conn" x1="240" y1="90" x2="320" y2="90"/>
+          <text class="card-num" x="270" y="78">N</text>
+          <polygon class="rel" points="320,60 380,90 320,120 260,90"/>
+          <text class="lbl-rel" x="320" y="90">vende</text>
+          <line class="conn" x1="380" y1="90" x2="460" y2="90"/>
+          <text class="card-num" x="430" y="78">M</text>
+
+          <line class="conn" x1="320" y1="120" x2="320" y2="150"/>
+          <ellipse class="attr" cx="320" cy="160" rx="26" ry="12"/>
+          <text class="lbl-attr" x="320" y="160">precio</text>
+
+          <!-- PRODUCTO -->
+          <rect class="ent ent-purple" x="460" y="60" width="180" height="60"/>
+          <text class="lbl" x="550" y="90">Producto</text>
+
+          <line class="conn" x1="480" y1="60" x2="460" y2="20"/>
+          <ellipse class="attr" cx="460" cy="14" rx="34" ry="12"/>
+          <text class="lbl-attr" x="460" y="14">codigo</text>
+          <line class="attr-pk-line" x1="430" y1="22" x2="490" y2="22"/>
+
+          <line class="conn" x1="550" y1="60" x2="550" y2="32"/>
+          <ellipse class="attr" cx="550" cy="22" rx="38" ry="12"/>
+          <text class="lbl-attr" x="550" y="22">descripcion</text>
+
+          <line class="conn" x1="620" y1="60" x2="640" y2="32"/>
+          <ellipse class="attr" cx="648" cy="22" rx="22" ry="12"/>
+          <text class="lbl-attr" x="648" y="22">color</text>
+
+          <!-- Relacion fabrica (Fabrica-Producto) -->
+          <line class="conn" x1="640" y1="90" x2="720" y2="90"/>
+          <text class="card-num" x="660" y="78">N</text>
+          <polygon class="rel" points="720,60 780,90 720,120 660,90"/>
+          <text class="lbl-rel" x="720" y="90">fabrica</text>
+          <line class="conn" x1="780" y1="90" x2="850" y2="90"/>
+          <text class="card-num" x="820" y="78">1</text>
+
+          <!-- FABRICA -->
+          <rect class="ent ent-blue" x="850" y="60" width="180" height="60"/>
+          <text class="lbl" x="940" y="90">Fabrica</text>
+
+          <line class="conn" x1="870" y1="60" x2="850" y2="20"/>
+          <ellipse class="attr" cx="850" cy="14" rx="42" ry="12"/>
+          <text class="lbl-attr" x="850" y="14">CUIT_fab</text>
+          <line class="attr-pk-line" x1="816" y1="22" x2="884" y2="22"/>
+
+          <line class="conn" x1="940" y1="60" x2="940" y2="32"/>
+          <ellipse class="attr" cx="940" cy="22" rx="34" ry="12"/>
+          <text class="lbl-attr" x="940" y="22">nombre</text>
+
+          <line class="conn" x1="1010" y1="60" x2="1040" y2="32"/>
+          <ellipse class="attr" cx="1050" cy="22" rx="40" ry="12"/>
+          <text class="lbl-attr" x="1050" y="22">pais_origen</text>
+
+          <line class="conn" x1="940" y1="120" x2="940" y2="150"/>
+          <ellipse class="attr" cx="940" cy="160" rx="34" ry="12"/>
+          <text class="lbl-attr" x="940" y="160">costo_fab</text>
+
+          <!-- COMPRA (relacion ternaria: Cliente-Producto-Sucursal) -->
+          <polygon class="rel" points="500,420 580,460 500,500 420,460" fill="#ffe0b2"/>
+          <text class="lbl-rel" x="500" y="460">compra</text>
+
+          <!-- Producto a Compra -->
+          <line class="conn" x1="550" y1="120" x2="550" y2="280"/>
+          <line class="conn" x1="550" y1="280" x2="500" y2="420"/>
+          <text class="card-num" x="540" y="270">N</text>
+
+          <!-- Sucursal a Compra -->
+          <line class="conn" x1="240" y1="90" x2="280" y2="90"/>
+          <line class="conn" x1="280" y1="90" x2="280" y2="460"/>
+          <line class="conn" x1="280" y1="460" x2="420" y2="460"/>
+          <text class="card-num" x="290" y="280">N</text>
+
+          <!-- Cliente a Compra -->
+          <line class="conn" x1="500" y1="500" x2="500" y2="570"/>
+          <text class="card-num" x="490" y="540">N</text>
+
+          <!-- atributo fecha en compra -->
+          <line class="conn" x1="580" y1="460" x2="620" y2="460"/>
+          <ellipse class="attr" cx="650" cy="460" rx="30" ry="12"/>
+          <text class="lbl-attr" x="650" y="460">fecha</text>
+
+          <!-- CLIENTE -->
+          <rect class="ent" x="410" y="570" width="180" height="60" style="fill:#bbdefb"/>
+          <text class="lbl" x="500" y="600">Cliente</text>
+
+          <line class="conn" x1="430" y1="630" x2="410" y2="680"/>
+          <ellipse class="attr" cx="395" cy="690" rx="40" ry="12"/>
+          <text class="lbl-attr" x="395" y="690">cod_cliente</text>
+          <line class="attr-pk-line" x1="358" y1="698" x2="432" y2="698"/>
+
+          <line class="conn" x1="500" y1="630" x2="500" y2="680"/>
+          <ellipse class="attr" cx="500" cy="690" rx="22" ry="12"/>
+          <text class="lbl-attr" x="500" y="690">dni</text>
+
+          <line class="conn" x1="570" y1="630" x2="600" y2="680"/>
+          <ellipse class="attr" cx="610" cy="690" rx="30" ry="12"/>
+          <text class="lbl-attr" x="610" y="690">nombre</text>
+
+          <!-- Relacion paga_con (Compra-Tarjeta) -->
+          <line class="conn" x1="580" y1="460" x2="780" y2="460"/>
+          <text class="card-num" x="700" y="448">M</text>
+          <polygon class="rel" points="780,430 840,460 780,490 720,460" fill="#ffe0b2"/>
+          <text class="lbl-rel" x="780" y="460">paga_con</text>
+          <line class="conn" x1="840" y1="460" x2="920" y2="460"/>
+          <text class="card-num" x="890" y="448">N</text>
+
+          <!-- TARJETA -->
+          <rect class="ent" x="920" y="430" width="180" height="60" style="fill:#cfd8dc"/>
+          <text class="lbl" x="1010" y="460">Tarjeta</text>
+
+          <line class="conn" x1="940" y1="490" x2="920" y2="540"/>
+          <ellipse class="attr" cx="908" cy="550" rx="28" ry="12"/>
+          <text class="lbl-attr" x="908" y="550">nro</text>
+          <line class="attr-pk-line" x1="884" y1="558" x2="932" y2="558"/>
+
+          <line class="conn" x1="1010" y1="490" x2="1010" y2="540"/>
+          <ellipse class="attr" cx="1010" cy="550" rx="32" ry="12"/>
+          <text class="lbl-attr" x="1010" y="550">cod_seg</text>
+
+          <line class="conn" x1="1080" y1="490" x2="1100" y2="540"/>
+          <ellipse class="attr" cx="1110" cy="550" rx="38" ry="12"/>
+          <text class="lbl-attr" x="1110" y="550">vencimiento</text>
+
+        </svg>
+      </div>
+
+      <!-- MR -->
+      <div class="diagram-frame" style="margin-top: 32px;">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; color: var(--accent-2); margin-bottom: 16px; font-weight: 700;">MODELO RELACIONAL (TABLAS)</div>
+        <svg viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg">
+
+          <!-- TABLA: SUCURSAL -->
+          <g>
+            <rect x="20" y="20" width="200" height="30" fill="#2d5d4f"/>
+            <text x="120" y="40" font-family="Inter" font-size="14" font-weight="700" fill="#f5f1e8" text-anchor="middle">SUCURSAL</text>
+            <rect x="20" y="50" width="200" height="140" fill="#fff" stroke="#1a1a1a" stroke-width="1.5"/>
+            <text x="30" y="72" font-family="JetBrains Mono" font-size="12" fill="#1a1a1a"><tspan font-weight="700">CUIT</tspan> <tspan fill="#c8553d" font-size="10">PK</tspan></text>
+            <text x="30" y="92" font-family="JetBrains Mono" font-size="12" fill="#1a1a1a">nombre</text>
+            <text x="30" y="112" font-family="JetBrains Mono" font-size="12" fill="#1a1a1a">calle</text>
+            <text x="30" y="132" font-family="JetBrains Mono" font-size="12" fill="#1a1a1a">nro</text>
+            <text x="30" y="152" font-family="JetBrains Mono" font-size="12" fill="#1a1a1a">ciudad</text>
+            <text x="30" y="172" font-family="JetBrains Mono" font-size="12" fill="#1a1a1a">gerente</text>
+          </g>
+
+          <!-- TABLA: EMPLEADO -->
+          <g>
+            <rect x="20" y="230" width="200" height="30" fill="#c8553d"/>
+            <text x="120" y="250" font-family="Inter" font-size="14" font-weight="700" fill="#f5f1e8" text-anchor="middle">EMPLEADO</text>
+            <rect x="20" y="260" width="200" height="100" fill="#fff" stroke="#1a1a1a" stroke-width="1.5"/>
+            <text x="30" y="282" font-family="JetBrains Mono" font-size="12" fill="#1a1a1a"><tspan font-weight="700">legajo</tspan> <tspan fill="#c8553d" font-size="10">PK</tspan></text>
+            <text x="30" y="302" font-family="JetBrains Mono" font-size="12" fill="#1a1a1a">nombre</text>
+            <text x="30" y="322" font-family="JetBrains Mono" font-size="12" fill="#1a1a1a">dni</text>
+            <text x="30" y="342" font-family="JetBrains Mono" font-size="12" fill="#1a1a1a">domicilio</text>
+          </g>
+
+          <!-- TABLA: TELEFONO_EMP (multivaluado) -->
+          <g>
+            <rect x="20" y="400" width="200" height="30" fill="#c8553d"/>
+            <text x="120" y="420" font-family="Inter" font-size="14" font-weight="700" fill="#f5f1e8" text-anchor="middle">TELEFONO_EMP</text>
+            <rect x="20" y="430" width="200" height="80" fill="#fff" stroke="#1a1a1a" stroke-width="1.5"/>
+            <text x="30" y="452" font-family="JetBrains Mono" font-size="12" fill="#1a1a1a"><tspan font-weight="700">legajo, telefono</tspan></text>
+            <text x="30" y="472" font-family="JetBrains Mono" font-size="10" fill="#c8553d">PK (legajo, telefono)</text>
+            <text x="30" y="492" font-family="JetBrains Mono" font-size="10" fill="#4a5fa8">FK legajo -> EMPLEADO</text>
+          </g>
+
+          <!-- TABLA: TRABAJA_EN -->
+          <g>
+            <rect x="260" y="230" width="240" height="30" fill="#d4a017"/>
+            <text x="380" y="250" font-family="Inter" font-size="14" font-weight="700" fill="#1a1a1a" text-anchor="middle">TRABAJA_EN</text>
+            <rect x="260" y="260" width="240" height="120" fill="#fff" stroke="#1a1a1a" stroke-width="1.5"/>
+            <text x="270" y="282" font-family="JetBrains Mono" font-size="12" fill="#1a1a1a">legajo, CUIT_suc, dia</text>
+            <text x="270" y="302" font-family="JetBrains Mono" font-size="12" fill="#1a1a1a">hora_inicio, hora_fin</text>
+            <text x="270" y="324" font-family="JetBrains Mono" font-size="10" fill="#c8553d">PK (legajo, CUIT_suc, dia)</text>
+            <text x="270" y="344" font-family="JetBrains Mono" font-size="10" fill="#4a5fa8">FK legajo -> EMPLEADO</text>
+            <text x="270" y="362" font-family="JetBrains Mono" font-size="10" fill="#4a5fa8">FK CUIT_suc -> SUCURSAL</text>
+          </g>
+
+          <!-- TABLA: PRODUCTO -->
+          <g>
+            <rect x="540" y="20" width="200" height="30" fill="#7e57c2"/>
+            <text x="640" y="40" font-family="Inter" font-size="14" font-weight="700" fill="#f5f1e8" text-anchor="middle">PRODUCTO</text>
+            <rect x="540" y="50" width="200" height="120" fill="#fff" stroke="#1a1a1a" stroke-width="1.5"/>
+            <text x="550" y="72" font-family="JetBrains Mono" font-size="12" fill="#1a1a1a"><tspan font-weight="700">codigo</tspan> <tspan fill="#c8553d" font-size="10">PK</tspan></text>
+            <text x="550" y="92" font-family="JetBrains Mono" font-size="12" fill="#1a1a1a">descripcion</text>
+            <text x="550" y="112" font-family="JetBrains Mono" font-size="12" fill="#1a1a1a">color</text>
+            <text x="550" y="132" font-family="JetBrains Mono" font-size="12" fill="#1a1a1a">costo_fab</text>
+            <text x="550" y="152" font-family="JetBrains Mono" font-size="10" fill="#4a5fa8">FK CUIT_fab -> FABRICA</text>
+          </g>
+
+          <!-- TABLA: VENDE -->
+          <g>
+            <rect x="540" y="230" width="200" height="30" fill="#d4a017"/>
+            <text x="640" y="250" font-family="Inter" font-size="14" font-weight="700" fill="#1a1a1a" text-anchor="middle">VENDE</text>
+            <rect x="540" y="260" width="200" height="100" fill="#fff" stroke="#1a1a1a" stroke-width="1.5"/>
+            <text x="550" y="282" font-family="JetBrains Mono" font-size="12" fill="#1a1a1a">CUIT_suc, cod_prod</text>
+            <text x="550" y="302" font-family="JetBrains Mono" font-size="12" fill="#1a1a1a">precio</text>
+            <text x="550" y="322" font-family="JetBrains Mono" font-size="10" fill="#c8553d">PK (CUIT_suc, cod_prod)</text>
+            <text x="550" y="342" font-family="JetBrains Mono" font-size="10" fill="#4a5fa8">FKs a SUCURSAL y PRODUCTO</text>
+          </g>
+
+          <!-- TABLA: FABRICA -->
+          <g>
+            <rect x="800" y="20" width="200" height="30" fill="#4a5fa8"/>
+            <text x="900" y="40" font-family="Inter" font-size="14" font-weight="700" fill="#f5f1e8" text-anchor="middle">FABRICA</text>
+            <rect x="800" y="50" width="200" height="80" fill="#fff" stroke="#1a1a1a" stroke-width="1.5"/>
+            <text x="810" y="72" font-family="JetBrains Mono" font-size="12" fill="#1a1a1a"><tspan font-weight="700">CUIT_fab</tspan> <tspan fill="#c8553d" font-size="10">PK</tspan></text>
+            <text x="810" y="92" font-family="JetBrains Mono" font-size="12" fill="#1a1a1a">nombre</text>
+            <text x="810" y="112" font-family="JetBrains Mono" font-size="12" fill="#1a1a1a">pais_origen</text>
+          </g>
+
+          <!-- TABLA: CLIENTE -->
+          <g>
+            <rect x="260" y="430" width="200" height="30" fill="#1976d2"/>
+            <text x="360" y="450" font-family="Inter" font-size="14" font-weight="700" fill="#f5f1e8" text-anchor="middle">CLIENTE</text>
+            <rect x="260" y="460" width="200" height="100" fill="#fff" stroke="#1a1a1a" stroke-width="1.5"/>
+            <text x="270" y="482" font-family="JetBrains Mono" font-size="12" fill="#1a1a1a"><tspan font-weight="700">cod_cliente</tspan> <tspan fill="#c8553d" font-size="10">PK</tspan></text>
+            <text x="270" y="502" font-family="JetBrains Mono" font-size="12" fill="#1a1a1a">dni</text>
+            <text x="270" y="522" font-family="JetBrains Mono" font-size="12" fill="#1a1a1a">nombre</text>
+            <text x="270" y="542" font-family="JetBrains Mono" font-size="12" fill="#1a1a1a">fecha_nac, ciudad</text>
+          </g>
+
+          <!-- TABLA: TARJETA -->
+          <g>
+            <rect x="800" y="430" width="200" height="30" fill="#546e7a"/>
+            <text x="900" y="450" font-family="Inter" font-size="14" font-weight="700" fill="#f5f1e8" text-anchor="middle">TARJETA</text>
+            <rect x="800" y="460" width="200" height="120" fill="#fff" stroke="#1a1a1a" stroke-width="1.5"/>
+            <text x="810" y="482" font-family="JetBrains Mono" font-size="12" fill="#1a1a1a"><tspan font-weight="700">nro</tspan> <tspan fill="#c8553d" font-size="10">PK</tspan></text>
+            <text x="810" y="502" font-family="JetBrains Mono" font-size="12" fill="#1a1a1a">cod_seguridad</text>
+            <text x="810" y="522" font-family="JetBrains Mono" font-size="12" fill="#1a1a1a">vencimiento</text>
+            <text x="810" y="542" font-family="JetBrains Mono" font-size="12" fill="#1a1a1a">cod_cliente</text>
+            <text x="810" y="562" font-family="JetBrains Mono" font-size="10" fill="#4a5fa8">FK cod_cliente -> CLIENTE</text>
+          </g>
+
+          <!-- TABLA: COMPRA -->
+          <g>
+            <rect x="540" y="430" width="200" height="30" fill="#37474f"/>
+            <text x="640" y="450" font-family="Inter" font-size="14" font-weight="700" fill="#f5f1e8" text-anchor="middle">COMPRA</text>
+            <rect x="540" y="460" width="200" height="140" fill="#fff" stroke="#1a1a1a" stroke-width="1.5"/>
+            <text x="550" y="482" font-family="JetBrains Mono" font-size="12" fill="#1a1a1a">cod_cliente, cod_prod</text>
+            <text x="550" y="502" font-family="JetBrains Mono" font-size="12" fill="#1a1a1a">CUIT_suc, fecha, nro_tarj</text>
+            <text x="550" y="524" font-family="JetBrains Mono" font-size="9" fill="#c8553d">PK (cod_cliente, cod_prod, fecha)</text>
+            <text x="550" y="544" font-family="JetBrains Mono" font-size="10" fill="#4a5fa8">FK cod_cliente -> CLIENTE</text>
+            <text x="550" y="562" font-family="JetBrains Mono" font-size="10" fill="#4a5fa8">FK cod_prod -> PRODUCTO</text>
+            <text x="550" y="580" font-family="JetBrains Mono" font-size="10" fill="#4a5fa8">FK CUIT_suc -> SUCURSAL</text>
+          </g>
+
+          <!-- Conexiones FK -->
+          <line x1="220" y1="280" x2="260" y2="280" class="conn" stroke="#4a5fa8" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <line x1="220" y1="450" x2="260" y2="450" class="conn" stroke="#4a5fa8" stroke-width="1.5" stroke-dasharray="4,3" opacity="0"/>
+          <line x1="220" y1="450" x2="260" y2="510" class="conn" stroke="#4a5fa8" stroke-width="1.5" stroke-dasharray="4,3" opacity="0"/>
+          <line x1="740" y1="80" x2="800" y2="80" class="conn" stroke="#4a5fa8" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <line x1="500" y1="280" x2="540" y2="280" class="conn" stroke="#4a5fa8" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <line x1="460" y1="500" x2="540" y2="500" class="conn" stroke="#4a5fa8" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <line x1="740" y1="500" x2="800" y2="500" class="conn" stroke="#4a5fa8" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <line x1="640" y1="170" x2="640" y2="230" class="conn" stroke="#4a5fa8" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <line x1="640" y1="380" x2="640" y2="430" class="conn" stroke="#4a5fa8" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+        </svg>
+      </div>
+
+      <div class="analysis">
+        <div class="card errors">
+          <h3>Errores del original</h3>
+          <ul>
+            <li>En el MR aparece <strong>TRABAJA_EN duplicado</strong> (dos veces el mismo recuadro)</li>
+            <li>En CLIENTE la PK dice <strong>cod_cliente FK</strong>: contradiccion, debe ser PK</li>
+            <li>La PK de TARJETA esta mal definida</li>
+            <li>En COMPRA aparece <strong>"feha"</strong> en vez de "fecha"</li>
+            <li>El multivaluado <strong>telefono</strong> de Empleado se pierde mal en el MR</li>
+            <li>"compra en" como relacion entre Cliente y Empleado no tiene sentido (en una tienda compras a la sucursal, no a un empleado especifico)</li>
+          </ul>
+        </div>
+        <div class="card fixes">
+          <h3>Correcciones aplicadas</h3>
+          <ul>
+            <li>Se elimino el duplicado de TRABAJA_EN</li>
+            <li><strong>cod_cliente</strong> ahora es PK pura en CLIENTE</li>
+            <li>TARJETA con <strong>nro</strong> como PK y FK a CLIENTE</li>
+            <li>COMPRA con PK compuesta correctamente escrita: <strong>(cod_cliente, cod_prod, fecha)</strong></li>
+            <li><strong>TELEFONO_EMP</strong> creada como tabla separada con PK compuesta para representar el multivaluado</li>
+            <li>La relacion compra se modelo como ternaria entre Cliente, Producto y Sucursal</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tip">
+        <div class="tip-label">Regla de oro para pasar de MER a MR</div>
+        <p>Toda relacion <strong>N:M</strong> se convierte en una tabla nueva con la PK compuesta por las PKs de las entidades que une. Toda relacion <strong>1:N</strong> se resuelve agregando la PK del lado "1" como FK en el lado "N". Los atributos <strong>multivaluados</strong> se sacan a una tabla aparte con PK compuesta. Las relaciones <strong>1:1</strong> se pueden modelar agregando una FK en cualquiera de las dos tablas.</p>
+      </div>
+    </section>
+
+    <!-- ========== CONCEPTOS FINALES ========== -->
+    <section class="concepts" id="conceptos">
+      <h2>Conceptos clave para la evaluacion</h2>
+
+      <div class="concept-grid">
+        <div class="concept">
+          <div class="term">Concepto 01</div>
+          <h4>Entidad fuerte</h4>
+          <p>Objeto del mundo real que existe por si solo. Tiene su propia clave primaria. Se dibuja con rectangulo simple.</p>
+        </div>
+
+        <div class="concept">
+          <div class="term">Concepto 02</div>
+          <h4>Entidad debil</h4>
+          <p>Depende de otra entidad para existir. Su PK suele ser parcial y necesita combinarse con la PK de la entidad fuerte. Doble rectangulo.</p>
+        </div>
+
+        <div class="concept">
+          <div class="term">Concepto 03</div>
+          <h4>Clave primaria (PK)</h4>
+          <p>Atributo o conjunto de atributos que identifican univocamente cada instancia. Unico, no nulo. Se subraya en el DER.</p>
+        </div>
+
+        <div class="concept">
+          <div class="term">Concepto 04</div>
+          <h4>Clave foranea (FK)</h4>
+          <p>Atributo en una tabla que referencia la PK de otra. Es el mecanismo que vincula tablas en el modelo relacional.</p>
+        </div>
+
+        <div class="concept">
+          <div class="term">Concepto 05</div>
+          <h4>Cardinalidad</h4>
+          <p>Numero de instancias de una entidad que pueden asociarse con otra. Se expresa como 1:1, 1:N o N:M.</p>
+        </div>
+
+        <div class="concept">
+          <div class="term">Concepto 06</div>
+          <h4>Atributo derivado</h4>
+          <p>Se calcula a partir de otros atributos. No se almacena. Ejemplo: edad se deriva de fecha_nacimiento. Elipse punteada.</p>
+        </div>
+
+        <div class="concept">
+          <div class="term">Concepto 07</div>
+          <h4>Atributo multivaluado</h4>
+          <p>Admite multiples valores. Ejemplo: una persona puede tener varios telefonos. Doble elipse. En el MR se vuelve tabla aparte.</p>
+        </div>
+
+        <div class="concept">
+          <div class="term">Concepto 08</div>
+          <h4>Atributo compuesto</h4>
+          <p>Se subdivide en sub-atributos. Ejemplo: direccion se compone de calle, numero, ciudad. Se representan como elipses unidas.</p>
+        </div>
+
+        <div class="concept">
+          <div class="term">Concepto 09</div>
+          <h4>Relacion</h4>
+          <p>Asociacion entre dos o mas entidades. Se nombra con un verbo. Se dibuja como rombo. Puede tener atributos propios.</p>
+        </div>
+
+        <div class="concept">
+          <div class="term">Concepto 10</div>
+          <h4>Relacion ternaria</h4>
+          <p>Une tres entidades a la vez. Util cuando la asociacion requiere los tres contextos para tener sentido (ej: cliente compra producto en sucursal).</p>
+        </div>
+
+        <div class="concept">
+          <div class="term">Concepto 11</div>
+          <h4>Primera forma normal (1FN)</h4>
+          <p>Todos los atributos son atomicos (no se subdividen) y no hay grupos repetitivos. Cada celda contiene un solo valor.</p>
+        </div>
+
+        <div class="concept">
+          <div class="term">Concepto 12</div>
+          <h4>Segunda forma normal (2FN)</h4>
+          <p>Cumple 1FN. Ademas, todo atributo no clave depende de la totalidad de la PK (no solo de parte cuando es compuesta).</p>
+        </div>
+
+        <div class="concept">
+          <div class="term">Concepto 13</div>
+          <h4>Tercera forma normal (3FN)</h4>
+          <p>Cumple 2FN. Ademas, no hay dependencias transitivas: ningun atributo no clave depende de otro atributo no clave.</p>
+        </div>
+
+        <div class="concept">
+          <div class="term">Concepto 14</div>
+          <h4>Modelo conceptual</h4>
+          <p>Es el DER puro. No depende de ninguna tecnologia. Describe el negocio en terminos de entidades, atributos y relaciones.</p>
+        </div>
+
+        <div class="concept">
+          <div class="term">Concepto 15</div>
+          <h4>Modelo logico</h4>
+          <p>Transformacion del DER a tablas con PKs y FKs. Aun no se asocia a un motor especifico (MySQL, PostgreSQL, etc).</p>
+        </div>
+
+        <div class="concept">
+          <div class="term">Concepto 16</div>
+          <h4>Modelo fisico</h4>
+          <p>El SQL real con tipos de datos, indices, restricciones y particionado. Ya se eligio el motor de base de datos.</p>
+        </div>
+      </div>
+
+      <div class="tip" style="margin-top: 40px;">
+        <div class="tip-label">Estrategia para la evaluacion</div>
+        <p>Si te dan un enunciado y te piden modelar: (1) subraya los sustantivos importantes, esas son tus entidades. (2) Identifica los verbos que las conectan, esas son tus relaciones. (3) Para cada entidad, lista sus atributos y elige la PK. (4) Determina las cardinalidades preguntandote "cuantos X pueden tener cuantos Y?". (5) Si una relacion es N:M, anota que generara una tabla intermedia. Practica este flujo y manana no fallas.</p>
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+</body>
+</html>
